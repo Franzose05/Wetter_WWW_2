@@ -2,44 +2,39 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Wetterabfrage</title>
+  <title>🌤️ Wetter-App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
       background: linear-gradient(to right, #87CEFA, #f0f8ff);
-      padding: 2rem;
       text-align: center;
+      padding: 50px;
     }
     .container {
-      background-color: white;
+      background: white;
+      padding: 30px;
       border-radius: 10px;
-      padding: 2rem;
-      max-width: 400px;
-      margin: auto;
+      display: inline-block;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
     input, button {
       padding: 0.5rem;
-      font-size: 1rem;
       margin-top: 1rem;
+      font-size: 1rem;
       width: 80%;
     }
     #ausgabe {
       margin-top: 2rem;
       font-size: 1.1rem;
     }
-    .emoji {
-      font-size: 3rem;
-    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>🌤️ Wetterabfrage</h1>
-    <p>Gib eine Stadt ein:</p>
-    <input type="text" id="stadt" placeholder="z. B. Stuttgart">
+    <h1>🌍 Wetterabfrage</h1>
+    <input type="text" id="stadt" placeholder="z. B. Stuttgart" />
     <br>
     <button onclick="holeWetter()">Wetter abrufen</button>
 
@@ -47,7 +42,7 @@
   </div>
 
   <script>
-    const apiKey = "37902b8224263aa490b5dee0c2574ea1"; // ← Ersetze durch deinen eigenen Key!
+    const apiKey = "37902b8224263aa490b5dee0c2574ea1"; // Dein OpenWeatherMap API-Key
 
     async function holeWetter() {
       const city = document.getElementById("stadt").value.trim();
@@ -58,11 +53,14 @@
         return;
       }
 
-      const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric&lang=de`;
+      const proxy = "https://corsproxy.io/?";
+      const url = proxy + encodeURIComponent(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=de`
+      );
 
       try {
-        const res = await fetch(url);
-        const data = await res.json();
+        const response = await fetch(url);
+        const data = await response.json();
 
         if (data.cod !== 200) {
           ausgabe.innerHTML = `❌ Fehler: ${data.message}`;
@@ -70,13 +68,12 @@
         }
 
         const wetter = data.weather[0].description;
-        const temp = Math.round(data.main.temp * 10) / 10;
+        const temperatur = Math.round(data.main.temp * 10) / 10;
 
         ausgabe.innerHTML = `
-          <div class="emoji">🌡️</div>
-          <strong>Stadt:</strong> ${city}<br>
-          <strong>Wetter:</strong> ${wetter}<br>
-          <strong>Temperatur:</strong> ${temp} °C
+          <p><strong>📍 Stadt:</strong> ${city}</p>
+          <p><strong>🌤️ Wetter:</strong> ${wetter}</p>
+          <p><strong>🌡️ Temperatur:</strong> ${temperatur} °C</p>
         `;
       } catch (err) {
         ausgabe.innerHTML = "🚫 Fehler bei der Anfrage.";
@@ -86,3 +83,4 @@
 
 </body>
 </html>
+
